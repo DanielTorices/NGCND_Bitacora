@@ -64,22 +64,18 @@
                         class="sapUiSmallMarginBottom" />
 
                     <Label text="Cliente" required="true" />
-                    <ComboBox
+                    <Input
                         id="cmbCliente"
                         placeholder="Seleccione un cliente..."
-                        items="{path: 'clientsModel>/Clients'}"
                         class="sapUiSmallMarginBottom">
-                        <core:Item key="{clientsModel>id}" text="{clientsModel>name}" />
-                    </ComboBox>
+                    </Input>
 
                     <Label text="Proyecto" required="true" />
-                    <ComboBox
+                    <Input
                         id="cmbProyecto"
                         placeholder="Seleccione un proyecto..."
-                        items="{path: 'projectsModel>/Projects'}"
                         class="sapUiSmallMarginBottom">
-                        <core:Item key="{projectsModel>id}" text="{projectsModel>name}" />
-                    </ComboBox>
+                    </Input>
 
                     <Label text="Actividad" required="true" />
                     <TextArea

@@ -48,27 +48,6 @@ sap.ui.define([
                     this.getView().setBusy(false); // Ocultar indicador de carga
                 });
         },
-        
-        /**
-         * Carga los datos maestros para los ComboBox (Clientes y Proyectos).
-         */
-        _loadMasterData: function () {
-            // Cargar Clientes
-            const oClientsModel = new JSONModel();
-            this.getView().setModel(oClientsModel, "clientsModel");
-            //TODO: Reemplazar con la URL de tu API para obtener clientes
-            fetch("/api/clients") 
-                .then(res => res.json())
-                .then(data => oClientsModel.setData({ Clients: data }));
-
-            // Cargar Proyectos
-            const oProjectsModel = new JSONModel();
-            this.getView().setModel(oProjectsModel, "projectsModel");
-            //TODO: Reemplazar con la URL de tu API para obtener proyectos
-            fetch("/api/projects")
-                .then(res => res.json())
-                .then(data => oProjectsModel.setData({ Projects: data }));
-        },
 
         onSave: function () {
             const oView = this.getView();
