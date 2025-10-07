@@ -1,0 +1,114 @@
+<mvc:View
+    controllerName="bitacora.controller.MainView"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:form="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+    xmlns:layout="sap.ui.layout" 
+    height="100%">
+    <f:DynamicPage id="dynamicPageId"  showFooter="true">
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <Title text="Registro de Actividad en Bitácora"/>
+                </f:heading>
+                <f:expandedContent>
+                    <Label text="Complete todos los campos para registrar una nueva actividad."/>
+                </f:expandedContent>
+            </f:DynamicPageTitle>
+        </f:title>
+
+        <f:header>
+           <f:DynamicPageHeader pinnable="true">
+    <layout:HorizontalLayout allowWrapping="true">
+        <layout:VerticalLayout class="sapUiMediumMarginEnd">
+            <ObjectAttribute title="Usuario" text="{userModel>/name}"/>
+            <ObjectAttribute title="Rol" text="{userModel>/role}"/>
+        </layout:VerticalLayout>
+
+        <layout:VerticalLayout>
+         <ObjectAttribute title="Fecha Actual" text="{userModel>/currentDate}"/>
+            <ObjectStatus text="Online" state="Success" />
+        </layout:VerticalLayout>
+    </layout:HorizontalLayout>
+</f:DynamicPageHeader>
+        </f:header>
+
+        <f:content>
+            <form:SimpleForm
+                editable="true"
+                layout="ResponsiveGridLayout"
+                labelSpanXL="3"
+                labelSpanL="3"
+                labelSpanM="3"
+                labelSpanS="12"
+                adjustLabelSpan="false"
+                emptySpanXL="4"
+                emptySpanL="4"
+                emptySpanM="4"
+                emptySpanS="0"
+                columnsXL="1"
+                columnsL="1"
+                columnsM="1"
+                singleContainerFullSize="false"
+                class="sapUiResponsiveMargin">
+                <form:content>
+                    <core:Title text="Detalles de la Actividad" />
+                    <Label text="Fecha" required="true" />
+                    <DatePicker
+                        id="dpFecha"
+                        placeholder="Seleccione una fecha..."
+                        valueFormat="yyyy-MM-dd"
+                        displayFormat="long"
+                        class="sapUiSmallMarginBottom" />
+
+                    <Label text="Cliente" required="true" />
+                    <ComboBox
+                        id="cmbCliente"
+                        placeholder="Seleccione un cliente..."
+                        items="{path: 'clientsModel>/Clients'}"
+                        class="sapUiSmallMarginBottom">
+                        <core:Item key="{clientsModel>id}" text="{clientsModel>name}" />
+                    </ComboBox>
+
+                    <Label text="Proyecto" required="true" />
+                    <ComboBox
+                        id="cmbProyecto"
+                        placeholder="Seleccione un proyecto..."
+                        items="{path: 'projectsModel>/Projects'}"
+                        class="sapUiSmallMarginBottom">
+                        <core:Item key="{projectsModel>id}" text="{projectsModel>name}" />
+                    </ComboBox>
+
+                    <Label text="Actividad" required="true" />
+                    <TextArea
+                        id="txtActividad"
+                        placeholder="Describa la actividad realizada..."
+                        rows="4"
+                        width="100%"
+                        class="sapUiSmallMarginBottom" />
+
+                    <Label text="Horas Invertidas" required="true" />
+                    <StepInput
+                        id="siHoras"
+                        value="1"
+                        min="0.5"
+                        max="24"
+                        step="0.5"
+                        width="150px"
+                        class="sapUiSmallMarginBottom" />
+
+                </form:content>
+            </form:SimpleForm>
+        </f:content>
+
+        <f:footer>
+            <OverflowToolbar>
+                <ToolbarSpacer/>
+                <Button id="btnSave" type="Emphasized" text="Guardar Registro" press=".onSave"/>
+                <Button id="btnCancel" type="Default" text="Cancelar" press=".onCancel"/>
+            </OverflowToolbar>
+        </f:footer>
+    </f:DynamicPage>
+</mvc:View>

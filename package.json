@@ -1,0 +1,19 @@
+{
+    "name": "Bitacora.bitacora",
+    "scripts": {
+        "build": "mbt build --mtar Bitacora.bitacora.mtar",
+        "build:workspaces": "npm run build --workspaces --if-present",
+        "deploy": "cf deploy mta_archives/Bitacora.bitacora.mtar --retries 0",
+        "lint": "npm run lint --workspaces --if-present",
+        "ui5lint": "npm run ui5lint --workspaces --if-present",
+        "start:bitacora": "npm start --workspace bitacora",
+        "qunit": "fiori run --open test/unitTests.qunit.html",
+        "opa5": "fiori run --open test/opaTests.qunit.html"
+    },
+    "dependencies": {
+        "mbt": "^1"
+    },
+    "workspaces": [
+        "bitacora"
+    ]
+}

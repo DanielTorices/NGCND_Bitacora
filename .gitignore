@@ -1,0 +1,15 @@
+# Dependencias de Node.js
+node_modules/
+
+
+
+# Archivos de MTA (Multi-Target Application)
+mta_archives/
+
+# Variables de entorno locales
+.env
+
+# Archivos de caché o logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

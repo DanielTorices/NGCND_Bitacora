@@ -1,0 +1,30 @@
+{
+    "name": "bitacora",
+    "version": "0.0.1",
+    "private": true,
+    "description": "bitacora description",
+    "keywords": [
+        "ui5",
+        "openui5",
+        "sapui5"
+    ],
+    "main": "webapp/index.html",
+    "devDependencies": {
+        "@sap-ux/eslint-plugin-fiori-tools": "^0.2",
+        "@sap/ux-ui5-tooling": "1",
+        "@ui5/cli": "^3.0.0",
+        "@ui5/linter": "latest",
+        "@wdio/cli": "^8.46.0",
+        "@wdio/local-runner": "^8.46.0",
+        "@wdio/mocha-framework": "^8.46.0",
+        "@wdio/spec-reporter": "^8.43.0",
+        "wdio-ui5-service": "^2.2.1"
+    },
+    "scripts": {
+        "start": "fiori run --open index.html",
+        "build": "ui5 build self-contained --all --include-task generateVersionInfo --config=ui5.yaml --clean-dest --dest ../dist/bitacora",
+        "ui5lint": "ui5lint",
+        "lint": "eslint ./",
+        "wdi5": "wdio run ./webapp/test/e2e/\\wdio.conf.js"
+    }
+}

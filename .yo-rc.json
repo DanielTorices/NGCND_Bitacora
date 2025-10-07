@@ -1,0 +1,16 @@
+{
+  "generator-ui5-project": {
+    "namespaceUI5": "Bitacora",
+    "projectName": "bitacora",
+    "uimoduleName": "bitacora",
+    "enableFPM": false,
+    "platform": "Static webserver",
+    "ui5Libs": "Local resources (OpenUI5)",
+    "newDir": true,
+    "initRepo": false,
+    "projectId": "Bitacora.bitacora",
+    "uimodules": [
+      "bitacora"
+    ]
+  }
+}
