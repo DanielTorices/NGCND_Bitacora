@@ -55,7 +55,7 @@
             },
              "sapData": {
                 "type": "sap.ui.model.json.JSONModel",
-                "uri": "https://nbitacorangcnd.azurewebsites.net/api/bitacora"
+                "uri": "https://bitacorangcnd.azurewebsites.net/api/bitacora"
             }
         },
         "resources": {
