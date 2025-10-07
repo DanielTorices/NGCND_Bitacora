@@ -10,7 +10,6 @@ sap.ui.define([
 
         onInit: function () {
             this.getView().setBusy(true); // Mostrar indicador de carga al iniciar
-
             this._loadUserData();
         },
 
@@ -35,6 +34,11 @@ sap.ui.define([
                             role: clientPrincipal.userRoles.join(', '),
                             currentDate: sCurrentDate
                         });
+                    } else {
+                         // Manejo para desarrollo local o si no hay sesión
+                        oUserModel.setData({
+                            name: "Usuario Local", role: "Desarrollador", currentDate: sCurrentDate
+                        });
                     }
                 })
                 .catch(error => {
@@ -51,28 +55,31 @@ sap.ui.define([
         onSave: function () {
             const oView = this.getView();
             const sFecha = oView.byId("dpFecha").getValue();
-            const sClienteKey = oView.byId("cmbCliente").getSelectedKey();
-            const sProyectoKey = oView.byId("cmbProyecto").getSelectedKey();
+            // --- CAMBIO AQUÍ: Leer el valor de los campos de texto ---
+            const sCliente = oView.byId("clienteInput").getValue(); 
+            const sProyecto = oView.byId("proyectoInput").getValue();
+            // --------------------------------------------------------
             const sActividad = oView.byId("txtActividad").getValue();
             const fHoras = oView.byId("siHoras").getValue();
 
-            if (!sFecha || !sClienteKey || !sProyectoKey || !sActividad) {
+            if (!sFecha || !sCliente || !sProyecto || !sActividad) {
                 MessageToast.show("Por favor, complete todos los campos requeridos.");
                 return;
             }
 
             const oNewEntry = {
                 fecha: sFecha,
-                clienteId: sClienteKey,
-                proyectoId: sProyectoKey,
+                // --- CAMBIO AQUÍ: Enviar los valores de texto ---
+                clienteId: sCliente,
+                proyectoId: sProyecto,
+                // ---------------------------------------------
                 actividad: sActividad,
                 horas: fHoras
             };
             
-            // Reemplaza con la URL real de tu API en Azure (ej. https://tu-app.azurewebsites.net/api/bitacora)
-            const sApiUrl = "https://ngncdbitacora-f7cch7dxh3f3cthc.centralus-01.azurewebsites.net/api/bitacora";
+            const sApiUrl = "https://ngncdbitacora.azurewebsites.net/api/bitacora";
 
-            oView.setBusy(true); // 🔵 Mostrar indicador de carga
+            oView.setBusy(true);
 
             fetch(sApiUrl, {
                 method: "POST",
@@ -81,12 +88,15 @@ sap.ui.define([
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error("Error del servidor: " + response.statusText);
+                    // Intenta leer el cuerpo del error para más detalles
+                    return response.text().then(text => { 
+                        throw new Error(`Error del servidor: ${response.status} ${response.statusText} - ${text}`);
+                    });
                 }
                 return response.json();
             })
             .then(data => {
-                MessageBox.success("Registro de bitacora guardado exitosamente.", {
+                MessageBox.success("Registro de bitácora guardado exitosamente.", {
                     onClose: () => {
                         this.onCancel();
                     }
@@ -97,14 +107,16 @@ sap.ui.define([
                 console.error("Error en el POST:", error);
             })
             .finally(() => {
-                oView.setBusy(false); // 🔵 Quitar indicador de carga siempre (éxito o error)
+                oView.setBusy(false);
             });
         },
 
         onCancel: function () {
             this.getView().byId("dpFecha").setValue("");
-            this.getView().byId("cmbCliente").setSelectedKey("");
-            this.getView().byId("cmbProyecto").setSelectedKey("");
+            // --- CAMBIO AQUÍ: Limpiar los campos de texto ---
+            this.getView().byId("clienteInput").setValue("");
+            this.getView().byId("proyectoInput").setValue("");
+            // -----------------------------------------------
             this.getView().byId("txtActividad").setValue("");
             this.getView().byId("siHoras").setValue(1);
         }
