@@ -56,8 +56,8 @@ sap.ui.define([
             const oView = this.getView();
             const sFecha = oView.byId("dpFecha").getValue();
             // --- CAMBIO AQUÍ: Leer el valor de los campos de texto ---
-            const sCliente = oView.byId("clienteInput").getValue(); 
-            const sProyecto = oView.byId("proyectoInput").getValue();
+            const sCliente = oView.byId("cmbCliente").getValue(); 
+            const sProyecto = oView.byId("cmbProyecto").getValue();
             // --------------------------------------------------------
             const sActividad = oView.byId("txtActividad").getValue();
             const fHoras = oView.byId("siHoras").getValue();
