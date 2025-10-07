@@ -77,7 +77,7 @@ sap.ui.define([
                 horas: fHoras
             };
             
-            const sApiUrl = "https://ngncdbitacora.azurewebsites.net/api/bitacora";
+            const sApiUrl = "https://bitacorangcnd.azurewebsites.net/api/bitacora";
 
             oView.setBusy(true);
 
