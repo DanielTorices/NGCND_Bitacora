@@ -12,7 +12,6 @@ sap.ui.define([
             this.getView().setBusy(true); // Mostrar indicador de carga al iniciar
 
             this._loadUserData();
-            this._loadMasterData(); // Cargar datos para los ComboBox
         },
 
         /**
