@@ -9,19 +9,13 @@ sap.ui.define([
     return Controller.extend("bitacora.controller.MainView", {
 
         onInit: function () {
-            this.getView().setBusy(true);
-
-            // INICIALIZAR MODELO PARA LA TABLA
-            this.getView().setModel(new JSONModel({ entries: [] }), "logModel");
-
+            this.getView().setBusy(true); // Mostrar indicador de carga al iniciar
             this._loadUserData();
-            this._loadUserLogs(); // LLAMAR A LA CARGA DE REGISTROS
         },
 
         /**
          * Carga la información del usuario autenticado.
          */
-        
         _loadUserData: function () {
             const oUserModel = new JSONModel();
             this.getView().setModel(oUserModel, "userModel");
@@ -41,6 +35,7 @@ sap.ui.define([
                             currentDate: sCurrentDate
                         });
                     } else {
+                         // Manejo para desarrollo local o si no hay sesión
                         oUserModel.setData({
                             name: "Usuario Local", role: "Desarrollador", currentDate: sCurrentDate
                         });
@@ -51,44 +46,19 @@ sap.ui.define([
                     oUserModel.setData({
                         name: "Usuario Desconocido", role: "N/A", currentDate: sCurrentDate
                     });
-                });
-        },
-        
-        /**
-         * NUEVA FUNCIÓN: Carga los registros de la semana para el usuario loggeado.
-         */
-        _loadUserLogs: function () {
-            const oLogModel = this.getView().getModel("logModel");
-            const sApiUrl = "/api/bitacora-semana";
-
-            this.getView().setBusy(true);
-
-            fetch(sApiUrl)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("No se pudieron cargar los registros de la bitácora.");
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    oLogModel.setData({ entries: data });
-                })
-                .catch(error => {
-                    console.error("Error al cargar los registros:", error);
-                    MessageToast.show(error.message);
                 })
                 .finally(() => {
-                    this.getView().setBusy(false);
+                    this.getView().setBusy(false); // Ocultar indicador de carga
                 });
         },
 
         onSave: function () {
             const oView = this.getView();
             const sFecha = oView.byId("dpFecha").getValue();
-            // --- IDs CORREGIDOS ---
+            // --- CAMBIO AQUÍ: Leer el valor de los campos de texto ---
             const sCliente = oView.byId("clienteInput").getValue(); 
             const sProyecto = oView.byId("proyectoInput").getValue();
-            // --------------------
+            // --------------------------------------------------------
             const sActividad = oView.byId("txtActividad").getValue();
             const fHoras = oView.byId("siHoras").getValue();
 
@@ -99,13 +69,15 @@ sap.ui.define([
 
             const oNewEntry = {
                 fecha: sFecha,
+                // --- CAMBIO AQUÍ: Enviar los valores de texto ---
                 clienteId: sCliente,
                 proyectoId: sProyecto,
+                // ---------------------------------------------
                 actividad: sActividad,
                 horas: fHoras
             };
             
-            const sApiUrl = "/api/bitacora";
+            const sApiUrl = "https://bitacorangcnd.azurewebsites.net/api/bitacora";
 
             oView.setBusy(true);
 
@@ -116,6 +88,7 @@ sap.ui.define([
             })
             .then(response => {
                 if (!response.ok) {
+                    // Intenta leer el cuerpo del error para más detalles
                     return response.text().then(text => { 
                         throw new Error(`Error del servidor: ${response.status} ${response.statusText} - ${text}`);
                     });
@@ -126,7 +99,6 @@ sap.ui.define([
                 MessageBox.success("Registro de bitácora guardado exitosamente.", {
                     onClose: () => {
                         this.onCancel();
-                        this._loadUserLogs(); // <-- ACTUALIZAR LA TABLA
                     }
                 });
             })
@@ -141,8 +113,10 @@ sap.ui.define([
 
         onCancel: function () {
             this.getView().byId("dpFecha").setValue("");
+            // --- CAMBIO AQUÍ: Limpiar los campos de texto ---
             this.getView().byId("clienteInput").setValue("");
             this.getView().byId("proyectoInput").setValue("");
+            // -----------------------------------------------
             this.getView().byId("txtActividad").setValue("");
             this.getView().byId("siHoras").setValue(1);
         }
