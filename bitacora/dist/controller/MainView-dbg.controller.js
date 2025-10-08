@@ -86,7 +86,7 @@ sap.ui.define([
             const sFecha = oView.byId("dpFecha").getValue();
             // --- IDs CORREGIDOS ---
             const sCliente = oView.byId("clienteInput").getValue(); 
-            const sProyecto = oVew.byId("proyectoInput").getValue();
+            const sProyecto = oView.byId("proyectoInput").getValue();
             // --------------------
             const sActividad = oView.byId("txtActividad").getValue();
             const fHoras = oView.byId("siHoras").getValue();
