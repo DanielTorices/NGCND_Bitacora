@@ -58,7 +58,7 @@ sap.ui.define([
          */
         _loadUserLogs: function () {
             const oLogModel = this.getView().getModel("logModel");
-            const sApiUrl = "https://bitacorangcnd.azurewebsites.net/api/bitacora/semana";
+            const sApiUrl = "/api/bitacora-semana";
 
             this.getView().setBusy(true);
 
@@ -104,7 +104,7 @@ sap.ui.define([
                 horas: fHoras
             };
             
-            const sApiUrl = "https://bitacorangcnd.azurewebsites.net/api/bitacora";
+            const sApiUrl = "/api/bitacora";
 
             oView.setBusy(true);
 
