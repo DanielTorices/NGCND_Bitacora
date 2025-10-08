@@ -1,9 +1,0 @@
-{
-  "name": "api",
-  "version": "1.0.0",
-  "description": "API para Bitacora",
-  "main": "index.js",
-  "dependencies": {
-    "tedious": "^18.2.0"
-  }
-}
