@@ -85,8 +85,8 @@ sap.ui.define([
             const oView = this.getView();
             const sFecha = oView.byId("dpFecha").getValue();
             // --- IDs CORREGIDOS ---
-            const sCliente = oView.byId("cmbCliente").getValue(); 
-            const sProyecto = oVew.byId("cmbProyecto").getValue();
+            const sCliente = oView.byId("clienteInput").getValue(); 
+            const sProyecto = oVew.byId("proyectoInput").getValue();
             // --------------------
             const sActividad = oView.byId("txtActividad").getValue();
             const fHoras = oView.byId("siHoras").getValue();
@@ -140,8 +140,8 @@ sap.ui.define([
 
         onCancel: function () {
             this.getView().byId("dpFecha").setValue("");
-            this.getView().byId("cmbCliente").setValue("");
-            this.getView().byId("cmbProyecto").setValue("");
+            this.getView().byId("clienteInput").setValue("");
+            this.getView().byId("proyectoInput").setValue("");
             this.getView().byId("txtActividad").setValue("");
             this.getView().byId("siHoras").setValue(1);
         }
