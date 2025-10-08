@@ -21,6 +21,7 @@ sap.ui.define([
         /**
          * Carga la información del usuario autenticado.
          */
+        
         _loadUserData: function () {
             const oUserModel = new JSONModel();
             this.getView().setModel(oUserModel, "userModel");
