@@ -99,36 +99,36 @@
                     </form:content>
                 </form:SimpleForm>
 
-                <Table
-                    id="logTable"
-                    class="sapUiResponsiveMargin"
-                    width="auto"
-                    items="{localModel>/items}"
-                    noDataText="No tienes registros para esta semana.">
-                    <headerToolbar>
-                        <Toolbar>
-                            <Title text="Mis Registros de la Semana" level="H2"/>
-                        </Toolbar>
-                    </headerToolbar>
-                    <columns>
-                        <Column width="10rem"><Text text="Fecha" /></Column>
-                        <Column><Text text="Cliente" /></Column>
-                        <Column><Text text="Proyecto" /></Column>
-                        <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Actividad" /></Column>
-                        <Column hAlign="End" width="6rem"><Text text="Horas" /></Column>
-                    </columns>
-                    <items>
-                        <ColumnListItem>
-                            <cells>
-                                <Text text="{localModel>Fecha}" />
-                                <Text text="{localModel>ClienteId}" />
-                                <Text text="{localModel>ProyectoId}" />
-                                <Text text="{localModel>Actividad}" />
-                                <ObjectNumber number="{localModel>Horas}" unit="hrs"/>
-                            </cells>
-                        </ColumnListItem>
-                    </items>
-                </Table>
+               <Table
+    id="logTable"
+    class="sapUiResponsiveMargin"
+    width="auto"
+    items="{logModel>/entries}" 
+    noDataText="No tienes registros para esta semana.">
+    <headerToolbar>
+        <Toolbar>
+            <Title text="Mis Registros de la Semana" level="H2"/>
+        </Toolbar>
+    </headerToolbar>
+    <columns>
+        <Column width="10rem"><Text text="Fecha" /></Column>
+        <Column><Text text="Cliente" /></Column>
+        <Column><Text text="Proyecto" /></Column>
+        <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Actividad" /></Column>
+        <Column hAlign="End" width="6rem"><Text text="Horas" /></Column>
+    </columns>
+    <items>
+        <ColumnListItem>
+            <cells>
+                <Text text="{Fecha}" />
+                <Text text="{ClienteId}" />
+                <Text text="{ProyectoId}" />
+                <Text text="{Actividad}" />
+                <ObjectNumber number="{Horas}" unit="hrs"/>
+            </cells>
+        </ColumnListItem>
+    </items>
+</Table>
 
             </layout:VerticalLayout>
             </f:content>

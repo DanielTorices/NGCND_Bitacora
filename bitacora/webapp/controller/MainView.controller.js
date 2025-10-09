@@ -9,27 +9,15 @@ sap.ui.define([
     return Controller.extend("bitacora.controller.MainView", {
 
         onInit: function () {
-            this.getView().setBusy(true); // Mostrar indicador de carga al iniciar
-            this._loadUserData();
-
-            const oLocalModel = new JSONModel({
-                items: []
-            });
-
-            oLocalModel.setSizeLimit(1500000);
-
-            this.getView().setModel(oLocalModel, "localModel");
+            this.getView().setModel(new JSONModel(), "userModel");
             this.getView().setModel(new JSONModel({ entries: [] }), "logModel");
-
+            
+            this.getView().setBusy(true);
+            this._loadUserData();
         },
 
-        /**
-         * Carga la información del usuario autenticado.
-         */
         _loadUserData: function () {
-            const oUserModel = new JSONModel();
-            this.getView().setModel(oUserModel, "userModel");
-
+            const oUserModel = this.getView().getModel("userModel");
             const sCurrentDate = new Date().toLocaleDateString('es-MX', {
                 year: 'numeric', month: 'long', day: 'numeric'
             });
@@ -45,7 +33,6 @@ sap.ui.define([
                             currentDate: sCurrentDate
                         });
                     } else {
-                         // Manejo para desarrollo local o si no hay sesión
                         oUserModel.setData({
                             name: "Usuario Local", role: "Desarrollador", currentDate: sCurrentDate
                         });
@@ -58,24 +45,24 @@ sap.ui.define([
                     });
                 })
                 .finally(() => {
-                    this.getView().setBusy(false); // Ocultar indicador de carga
+                    // CAMBIO CLAVE: Cargar los logs DESPUÉS de tener el usuario
                     this._loadUserLogs();
                 });
         },
-_loadUserLogs: function () {
+        
+        _loadUserLogs: function () {
             const oView = this.getView();
             const oLogModel = oView.getModel("logModel");
-            
-            // CAMBIO: Obtenemos el usuario del modelo
             const sUserName = oView.getModel("userModel").getProperty("/name");
             
-            if (!sUserName) { return; }
+            if (!sUserName || sUserName === "Usuario Desconocido") { 
+                oView.setBusy(false);
+                return; 
+            }
 
-            // CAMBIO: Añadimos el usuario como parámetro en la URL
-            const sApiUrl = `https://bitacorangcnd.azurewebsites.net/api/bitacora2?usuario=${encodeURIComponent(sUserName)}`;
+            const sApiUrl = `/api/bitacora2?usuario=${encodeURIComponent(sUserName)}`;
 
-            oView.setBusy(true);
-
+            oView.setBusy(true); // Se activa de nuevo para esta carga específica
             fetch(sApiUrl)
                 .then(response => response.ok ? response.json() : Promise.reject("Error al cargar registros."))
                 .then(data => oLogModel.setData({ entries: data }))
@@ -83,21 +70,16 @@ _loadUserLogs: function () {
                 .finally(() => oView.setBusy(false));
         },
 
-               onSave: function () {
+        onSave: function () {
             const oView = this.getView();
+            const sUserName = oView.getModel("userModel").getProperty("/name");
+            
+            // ... (resto de tu lógica para obtener datos del formulario) ...
             const sFecha = oView.byId("dpFecha").getValue();
             const sCliente = oView.byId("clienteInput").getValue(); 
             const sProyecto = oView.byId("proyectoInput").getValue();
             const sActividad = oView.byId("txtActividad").getValue();
             const fHoras = oView.byId("siHoras").getValue();
-
-            if (!sFecha || !sCliente || !sProyecto || !sActividad) {
-                MessageToast.show("Por favor, complete todos los campos requeridos.");
-                return;
-            }
-
-            // CAMBIO: Obtenemos el usuario del modelo y lo añadimos al payload
-            const sUserName = oView.getModel("userModel").getProperty("/name");
 
             const oNewEntry = {
                 fecha: sFecha,
@@ -105,10 +87,10 @@ _loadUserLogs: function () {
                 proyectoId: sProyecto,
                 actividad: sActividad,
                 horas: fHoras,
-                usuario: sUserName // <-- Se añade el usuario al objeto
+                usuario: sUserName
             };
             
-            const sApiUrl = "https://bitacorangcnd.azurewebsites.net/api/bitacora";
+            const sApiUrl = "/api/bitacora";
 
             oView.setBusy(true);
             fetch(sApiUrl, {
