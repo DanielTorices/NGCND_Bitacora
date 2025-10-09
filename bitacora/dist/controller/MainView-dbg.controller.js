@@ -11,6 +11,15 @@ sap.ui.define([
         onInit: function () {
             this.getView().setBusy(true); // Mostrar indicador de carga al iniciar
             this._loadUserData();
+
+            const oLocalModel = new JSONModel({
+                items: []
+            });
+
+            oLocalModel.setSizeLimit(1500000);
+
+            this.getView().setModel(oLocalModel, "localModel");
+            this._loadDataFromAPI();
         },
 
         /**
@@ -49,6 +58,29 @@ sap.ui.define([
                 })
                 .finally(() => {
                     this.getView().setBusy(false); // Ocultar indicador de carga
+                });
+        },
+         _loadDataFromAPI: function () {
+            const sUrl = "https://bitacorangcnd.azurewebsites.net/api/bitacora2";
+            const oLocalModel = this.getView().getModel("localModel");
+
+            // 🔵 Mostrar busy en la vista
+            this.getView().setBusy(true);
+
+            fetch("https://bitacorangcnd.azurewebsites.net/api/bitacora2")
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+
+                    this._processData(data);
+                    oLocalModel.setProperty("/items", data);
+                })
+                .catch(error => {
+                    Log.error("Fallo la carga de datos del API", error);
+                })
+                .finally(() => {
+                    // 🔵 Quitar busy siempre (éxito o error)
+                    this.getView().setBusy(false);
                 });
         },
 
