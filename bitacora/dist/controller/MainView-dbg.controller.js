@@ -118,7 +118,7 @@ sap.ui.define([
             this.getView().byId("proyectoInput").setValue("");
             // -----------------------------------------------
             this.getView().byId("txtActividad").setValue("");
-            this.getView().byId("siHoras").setValue(1);
+            this.getView().byId("siHoras").setValue(0.25);
         }
     });
 });
