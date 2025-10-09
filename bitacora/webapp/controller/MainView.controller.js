@@ -9,15 +9,49 @@ sap.ui.define([
     return Controller.extend("bitacora.controller.MainView", {
 
         onInit: function () {
-            this.getView().setModel(new JSONModel(), "userModel");
-            this.getView().setModel(new JSONModel({ entries: [] }), "logModel");
+            this.getView().setBusy(true); // Mostrar indicador de carga al iniciar
             
-            this.getView().setBusy(true);
+
+            const oLocalModel = new JSONModel({
+                items: []
+            });
+
+            oLocalModel.setSizeLimit(1500000);
+
+            this.getView().setModel(oLocalModel, "localModel");
+            this.getView().setModel(new JSONModel({ entries: [] }), "logModel");
             this._loadUserData();
+            this._loadUserLogs();
+        },
+         _loadDataFromAPI: function () {
+            const sUrl = 'https://bitacorangcnd.azurewebsites.net/api/bitacora2?usuario=${encodeURIComponent(sUserName)}';
+            const oLocalModel = this.getView().getModel("localModel");
+
+            // 🔵 Mostrar busy en la vista
+            this.getView().setBusy(true);
+
+            fetch("https://bitacorangcnd.azurewebsites.net/api/bitacora2?usuario=${encodeURIComponent(sUserName)}")
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                    oLocalModel.setProperty("/items", data);
+                })
+                .catch(error => {
+                    Log.error("Fallo la carga de datos del API", error);
+                })
+                .finally(() => {
+                    // 🔵 Quitar busy siempre (éxito o error)
+                    this.getView().setBusy(false);
+                });
         },
 
+        /**
+         * Carga la información del usuario autenticado.
+         */
         _loadUserData: function () {
-            const oUserModel = this.getView().getModel("userModel");
+            const oUserModel = new JSONModel();
+            this.getView().setModel(oUserModel, "userModel");
+
             const sCurrentDate = new Date().toLocaleDateString('es-MX', {
                 year: 'numeric', month: 'long', day: 'numeric'
             });
@@ -33,6 +67,7 @@ sap.ui.define([
                             currentDate: sCurrentDate
                         });
                     } else {
+                         // Manejo para desarrollo local o si no hay sesión
                         oUserModel.setData({
                             name: "Usuario Local", role: "Desarrollador", currentDate: sCurrentDate
                         });
@@ -45,24 +80,24 @@ sap.ui.define([
                     });
                 })
                 .finally(() => {
-                    // CAMBIO CLAVE: Cargar los logs DESPUÉS de tener el usuario
+                    this.getView().setBusy(false); // Ocultar indicador de carga
                     this._loadUserLogs();
                 });
         },
-        
-        _loadUserLogs: function () {
+_loadUserLogs: function () {
             const oView = this.getView();
             const oLogModel = oView.getModel("logModel");
+            
+            // CAMBIO: Obtenemos el usuario del modelo
             const sUserName = oView.getModel("userModel").getProperty("/name");
             
-            if (!sUserName || sUserName === "Usuario Desconocido") { 
-                oView.setBusy(false);
-                return; 
-            }
+            if (!sUserName) { return; }
 
-            const sApiUrl = `/api/bitacora2?usuario=${encodeURIComponent(sUserName)}`;
+            // CAMBIO: Añadimos el usuario como parámetro en la URL
+            const sApiUrl = `https://bitacorangcnd.azurewebsites.net/api/bitacora2?usuario=${encodeURIComponent(sUserName)}`;
 
-            oView.setBusy(true); // Se activa de nuevo para esta carga específica
+            oView.setBusy(true);
+
             fetch(sApiUrl)
                 .then(response => response.ok ? response.json() : Promise.reject("Error al cargar registros."))
                 .then(data => oLogModel.setData({ entries: data }))
@@ -70,16 +105,21 @@ sap.ui.define([
                 .finally(() => oView.setBusy(false));
         },
 
-        onSave: function () {
+               onSave: function () {
             const oView = this.getView();
-            const sUserName = oView.getModel("userModel").getProperty("/name");
-            
-            // ... (resto de tu lógica para obtener datos del formulario) ...
             const sFecha = oView.byId("dpFecha").getValue();
             const sCliente = oView.byId("clienteInput").getValue(); 
             const sProyecto = oView.byId("proyectoInput").getValue();
             const sActividad = oView.byId("txtActividad").getValue();
             const fHoras = oView.byId("siHoras").getValue();
+
+            if (!sFecha || !sCliente || !sProyecto || !sActividad) {
+                MessageToast.show("Por favor, complete todos los campos requeridos.");
+                return;
+            }
+
+            // CAMBIO: Obtenemos el usuario del modelo y lo añadimos al payload
+            const sUserName = oView.getModel("userModel").getProperty("/name");
 
             const oNewEntry = {
                 fecha: sFecha,
@@ -87,10 +127,10 @@ sap.ui.define([
                 proyectoId: sProyecto,
                 actividad: sActividad,
                 horas: fHoras,
-                usuario: sUserName
+                usuario: sUserName // <-- Se añade el usuario al objeto
             };
             
-            const sApiUrl = "/api/bitacora";
+            const sApiUrl = "https://bitacorangcnd.azurewebsites.net/api/bitacora";
 
             oView.setBusy(true);
             fetch(sApiUrl, {
