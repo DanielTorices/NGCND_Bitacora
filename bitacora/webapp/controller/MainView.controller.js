@@ -58,39 +58,35 @@ sap.ui.define([
                 })
                 .finally(() => {
                     this.getView().setBusy(false); // Ocultar indicador de carga
+                    this._loadUserLogs();
                 });
         },
-         _loadDataFromAPI: function () {
-            const sUrl = "https://bitacorangcnd.azurewebsites.net/api/bitacora2";
-            const oLocalModel = this.getView().getModel("localModel");
+_loadUserLogs: function () {
+            const oView = this.getView();
+            const oLogModel = oView.getModel("logModel");
+            
+            // CAMBIO: Obtenemos el usuario del modelo
+            const sUserName = oView.getModel("userModel").getProperty("/name");
+            
+            if (!sUserName) { return; }
 
-            // 🔵 Mostrar busy en la vista
-            this.getView().setBusy(true);
+            // CAMBIO: Añadimos el usuario como parámetro en la URL
+            const sApiUrl = `https://bitacorangcnd.azurewebsites.net/api/bitacora2?usuario=${encodeURIComponent(sUserName)}`;
 
-            fetch("https://bitacorangcnd.azurewebsites.net/api/bitacora2")
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data)
+            oView.setBusy(true);
 
-                    this._processData(data);
-                    oLocalModel.setProperty("/items", data);
-                })
-                .catch(error => {
-                    Log.error("Fallo la carga de datos del API", error);
-                })
-                .finally(() => {
-                    // 🔵 Quitar busy siempre (éxito o error)
-                    this.getView().setBusy(false);
-                });
+            fetch(sApiUrl)
+                .then(response => response.ok ? response.json() : Promise.reject("Error al cargar registros."))
+                .then(data => oLogModel.setData({ entries: data }))
+                .catch(error => MessageToast.show(error))
+                .finally(() => oView.setBusy(false));
         },
 
-        onSave: function () {
+               onSave: function () {
             const oView = this.getView();
             const sFecha = oView.byId("dpFecha").getValue();
-            // --- CAMBIO AQUÍ: Leer el valor de los campos de texto ---
             const sCliente = oView.byId("clienteInput").getValue(); 
             const sProyecto = oView.byId("proyectoInput").getValue();
-            // --------------------------------------------------------
             const sActividad = oView.byId("txtActividad").getValue();
             const fHoras = oView.byId("siHoras").getValue();
 
@@ -99,48 +95,37 @@ sap.ui.define([
                 return;
             }
 
+            // CAMBIO: Obtenemos el usuario del modelo y lo añadimos al payload
+            const sUserName = oView.getModel("userModel").getProperty("/name");
+
             const oNewEntry = {
                 fecha: sFecha,
-                // --- CAMBIO AQUÍ: Enviar los valores de texto ---
                 clienteId: sCliente,
                 proyectoId: sProyecto,
-                // ---------------------------------------------
                 actividad: sActividad,
-                horas: fHoras
+                horas: fHoras,
+                usuario: sUserName // <-- Se añade el usuario al objeto
             };
             
             const sApiUrl = "https://bitacorangcnd.azurewebsites.net/api/bitacora";
 
             oView.setBusy(true);
-
             fetch(sApiUrl, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(oNewEntry)
             })
-            .then(response => {
-                if (!response.ok) {
-                    // Intenta leer el cuerpo del error para más detalles
-                    return response.text().then(text => { 
-                        throw new Error(`Error del servidor: ${response.status} ${response.statusText} - ${text}`);
-                    });
-                }
-                return response.json();
-            })
+            .then(response => response.ok ? response.json() : response.text().then(text => Promise.reject(text)))
             .then(data => {
-                MessageBox.success("Registro de bitácora guardado exitosamente.", {
+                MessageBox.success("Registro guardado exitosamente.", {
                     onClose: () => {
                         this.onCancel();
+                        this._loadUserLogs(); // Refrescar la tabla
                     }
                 });
             })
-            .catch(error => {
-                MessageBox.error("Ocurrió un error al intentar guardar el registro.\n\n" + error.message);
-                console.error("Error en el POST:", error);
-            })
-            .finally(() => {
-                oView.setBusy(false);
-            });
+            .catch(error => MessageBox.error(`Ocurrió un error: ${error}`))
+            .finally(() => oView.setBusy(false));
         },
 
         onCancel: function () {
