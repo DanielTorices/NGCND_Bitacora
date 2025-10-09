@@ -22,6 +22,7 @@ sap.ui.define([
             this.getView().setModel(new JSONModel({ entries: [] }), "logModel");
             this._loadUserData();
             this._loadUserLogs();
+            this._loadDataFromAPI();
         },
          _loadDataFromAPI: function () {
             const sUrl = 'https://bitacorangcnd.azurewebsites.net/api/bitacora2?usuario=${encodeURIComponent(sUserName)}';
