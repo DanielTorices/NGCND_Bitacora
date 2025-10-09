@@ -19,7 +19,7 @@ sap.ui.define([
             oLocalModel.setSizeLimit(1500000);
 
             this.getView().setModel(oLocalModel, "localModel");
-            this._loadDataFromAPI();
+
         },
 
         /**
