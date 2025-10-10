@@ -71,7 +71,7 @@
                             class="sapUiSmallMarginBottom">
                         </Input>
 
-                        <Label text="Proyecto" required="true" />
+                        <Label text="Proyecto" required="false" />
                         <Input
                             id="proyectoInput"
                             placeholder="Escriba el proyecto..."
@@ -83,6 +83,14 @@
                             id="txtActividad"
                             placeholder="Describa la actividad realizada..."
                             rows="4"
+                            width="100%"
+                            class="sapUiSmallMarginBottom" />
+
+                        <Label text="Comentario" required="false" />
+                        <TextArea
+                            id="txtComentario"
+                            placeholder="Escriba algún Comentario..."
+                            rows="3"
                             width="100%"
                             class="sapUiSmallMarginBottom" />
 
@@ -104,6 +112,9 @@
                     class="sapUiResponsiveMargin"
                     width="auto"
                     items="{localModel>/items}"
+                    growing="true"
+                    growingThreshold="20"
+                    growingScrollToLoad="true"
                     noDataText="No tienes registros para esta semana.">
                     <headerToolbar>
                         <Toolbar>
@@ -111,11 +122,12 @@
                         </Toolbar>
                     </headerToolbar>
                     <columns>
-                        <Column width="10rem"><Text text="Fecha" /></Column>
-                        <Column><Text text="Cliente" /></Column>
-                        <Column><Text text="Proyecto" /></Column>
+                        <Column  minScreenWidth="Tablet" demandPopin="true" width="10rem"><Text text="Fecha" /></Column>
+                        <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Cliente" /></Column>
+                        <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Proyecto" /></Column>
                         <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Actividad" /></Column>
-                        <Column hAlign="End" width="6rem"><Text text="Horas" /></Column>
+                        <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Comentario" /></Column>
+                        <Column minScreenWidth="Tablet" demandPopin="true" hAlign="End" width="6rem"><Text text="Horas" /></Column>
                     </columns>
                     <items>
                         <ColumnListItem>
@@ -124,7 +136,8 @@
                                 <Text text="{localModel>ClienteId}" />
                                 <Text text="{localModel>ProyectoId}" />
                                 <Text text="{localModel>Actividad}" />
-                                <ObjectNumber number="{localModel>Horas}" unit="hrs"/>
+                                <Text text="{localModel>Comentario}"/>
+                                <ObjectNumber number="{localModel>Horas}"/>
                             </cells>
                         </ColumnListItem>
                     </items>

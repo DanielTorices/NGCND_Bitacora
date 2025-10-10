@@ -93,9 +93,10 @@ sap.ui.define([
             const sCliente = oView.byId("clienteInput").getValue(); 
             const sProyecto = oView.byId("proyectoInput").getValue();
             const sActividad = oView.byId("txtActividad").getValue();
+            const sComentario= oView.byId("txtComentario").getValue();
             const fHoras = oView.byId("siHoras").getValue();
 
-            if (!sFecha || !sCliente || !sProyecto || !sActividad) {
+            if (!sFecha || !sCliente || !sActividad) {
                 MessageToast.show("Por favor, complete todos los campos requeridos.");
                 return;
             }
@@ -108,6 +109,7 @@ sap.ui.define([
                 clienteId: sCliente,
                 proyectoId: sProyecto,
                 actividad: sActividad,
+                comentario: sComentario,
                 horas: fHoras,
                 usuario: sUserName // <-- Se añade el usuario al objeto
             };
@@ -138,6 +140,7 @@ sap.ui.define([
             // --- CAMBIO AQUÍ: Limpiar los campos de texto ---
             this.getView().byId("clienteInput").setValue("");
             this.getView().byId("proyectoInput").setValue("");
+            this.getView().byId("txtComentario").setValue("");
             // -----------------------------------------------
             this.getView().byId("txtActividad").setValue("");
             this.getView().byId("siHoras").setValue(0.25);
