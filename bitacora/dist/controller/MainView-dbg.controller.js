@@ -25,13 +25,16 @@ sap.ui.define([
             this._loadDataFromAPI();
         },
          _loadDataFromAPI: function () {
-            const sUrl = 'https://bitacorangcnd.azurewebsites.net/api/bitacora2?usuario=${encodeURIComponent(sUserName)}';
+            const oView = this.getView();
+            const oLogModel = oView.getModel("logModel");
+            const sUserName = oView.getModel("userModel").getProperty("/name");
+           const sApiUrl = `https://bitacorangcnd.azurewebsites.net/api/bitacora2?usuario=${encodeURIComponent(sUserName)}`;
             const oLocalModel = this.getView().getModel("localModel");
 
             // 🔵 Mostrar busy en la vista
             this.getView().setBusy(true);
 
-            fetch("https://bitacorangcnd.azurewebsites.net/api/bitacora2?usuario=${encodeURIComponent(sUserName)}")
+            fetch(sApiUrl)
                 .then(response => response.json())
                 .then(data => {
                     console.log(data)
