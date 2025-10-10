@@ -22,36 +22,8 @@ sap.ui.define([
             this.getView().setModel(new JSONModel({ entries: [] }), "logModel");
             this._loadUserData();
             this._loadUserLogs();
-            this._loadDataFromAPI();
+            
         },
-         _loadDataFromAPI: function () {
-            const oView = this.getView();
-            const oLogModel = oView.getModel("logModel");
-            const sUserName = oView.getModel("userModel").getProperty("/name");
-           const sApiUrl = `https://bitacorangcnd.azurewebsites.net/api/bitacora2?usuario=${encodeURIComponent(sUserName)}`;
-            const oLocalModel = this.getView().getModel("localModel");
-
-            // 🔵 Mostrar busy en la vista
-            this.getView().setBusy(true);
-
-            fetch(sApiUrl)
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data)
-                    oLocalModel.setProperty("/items", data);
-                })
-                .catch(error => {
-                    Log.error("Fallo la carga de datos del API", error);
-                })
-                .finally(() => {
-                    // 🔵 Quitar busy siempre (éxito o error)
-                    this.getView().setBusy(false);
-                });
-        },
-
-        /**
-         * Carga la información del usuario autenticado.
-         */
         _loadUserData: function () {
             const oUserModel = new JSONModel();
             this.getView().setModel(oUserModel, "userModel");
@@ -88,7 +60,7 @@ sap.ui.define([
                     this._loadUserLogs();
                 });
         },
-_loadUserLogs: function () {
+            _loadUserLogs: function () {
             const oView = this.getView();
             const oLogModel = oView.getModel("logModel");
             
@@ -99,12 +71,18 @@ _loadUserLogs: function () {
 
             // CAMBIO: Añadimos el usuario como parámetro en la URL
             const sApiUrl = `https://bitacorangcnd.azurewebsites.net/api/bitacora2?usuario=${encodeURIComponent(sUserName)}`;
+            const oLocalModel = this.getView().getModel("localModel");
 
             oView.setBusy(true);
 
             fetch(sApiUrl)
                 .then(response => response.ok ? response.json() : Promise.reject("Error al cargar registros."))
-                .then(data => oLogModel.setData({ entries: data }))
+                .then(data => {
+                    
+                    oLocalModel.setProperty("/items", data);
+                    oLogModel.setData({ entries: data })
+                     
+                })
                 .catch(error => MessageToast.show(error))
                 .finally(() => oView.setBusy(false));
         },
