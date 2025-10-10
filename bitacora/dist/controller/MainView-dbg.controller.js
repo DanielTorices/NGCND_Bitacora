@@ -144,6 +144,18 @@ sap.ui.define([
             // -----------------------------------------------
             this.getView().byId("txtActividad").setValue("");
             this.getView().byId("siHoras").setValue(0.25);
+        },
+                 formatDate: function (sDate) {
+            if (!sDate) {
+                return "";
+            }
+            var oDate = new Date(sDate);
+            return oDate.toLocaleDateString("es-MX", {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                timeZone: 'UTC' // Importante para evitar cambios de día por zona horaria
+            });
         }
     });
 });

@@ -132,14 +132,7 @@
                     <items>
                         <ColumnListItem>
                             <cells>
-                                <Text text="{
-                                    path: 'Fecha',
-                                    type: 'sap.ui.model.type.Date',
-                                    formatOptions: {
-                                        style: 'medium',
-                                        UTC: true
-                                    }
-                                }" />
+                                <Text text="{path: 'Fecha', formatter: '.formatDate'}" />
                                 <Text text="{localModel>ClienteId}" />
                                 <Text text="{localModel>ProyectoId}" />
                                 <Text text="{localModel>Actividad}" />
