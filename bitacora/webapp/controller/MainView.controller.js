@@ -2,8 +2,9 @@ sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/json/JSONModel",
     "sap/m/MessageToast",
-    "sap/m/MessageBox"
-], function (Controller, JSONModel, MessageToast, MessageBox) {
+    "sap/m/MessageBox",
+    "sap/ui/core/format/DateFormat"
+], function (Controller, JSONModel, MessageToast, MessageBox,  DateFormat) {
     "use strict";
 
     return Controller.extend("bitacora.controller.MainView", {
@@ -146,12 +147,13 @@ sap.ui.define([
             this.getView().byId("siHoras").setValue(0.25);
         },
 
-         formatDate: function (date) {
-                var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
-                    pattern: "dd/MM/yyyy",
-                    UTC: true
-                });
-                return oDateFormat.format(date);
-            },
+ formatDate: function (oDate) {
+            if (!oDate) { return ""; }
+            var oDateFormat = DateFormat.getDateInstance({
+                pattern: "dd/MM/yyyy",
+                UTC: true
+            });
+            return oDateFormat.format(oDate);
+        }
     });
 });
