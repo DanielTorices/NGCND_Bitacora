@@ -132,7 +132,7 @@
                     <items>
                         <ColumnListItem>
                             <cells>
-                                <Text text="{path: 'Fecha', formatter: '.formatDate'}" />
+                                <Text text="{path: 'Fecha', formatter:'formatDate'}" />
                                 <Text text="{localModel>ClienteId}" />
                                 <Text text="{localModel>ProyectoId}" />
                                 <Text text="{localModel>Actividad}" />
